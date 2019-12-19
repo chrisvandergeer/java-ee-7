@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Java batch</title>
+</head>
+<body>
+<div style="margin: 20px;">
+    <h1>Java batch</h1>
+    <div id="app" class="shadow p-3 mb-5 bg-white rounded">
+        <h3>Batchjob statussen</h3>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>naam</th>
+                <th>gestart</th>
+                <th>geeindigd</th>
+                <th>status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="status in batchjobStatussen">
+                <td>{{ status.jobName }}</td>
+                <td>{{ new Date(status.startTime).toLocaleDateString() }} {{ new Date(status.startTime).toLocaleTimeString() }}</td>
+                <td>{{ new Date(status.endTime).toLocaleDateString() }} {{ new Date(status.endTime).toLocaleTimeString() }}</td>
+                <td>{{ status.exitStatus }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <button v-on:click="getStatus()" class="btn btn-primary">refresh</button>
+    </div>
+    <div class="alert alert-primary" role="alert">
+        <a href="index.html">&lt;&lt; terug naar onderwerpen</a>
+    </div>
+</div>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            batchjobStatussen: {}
+        },
+        methods: {
+            getStatus: function (event) {
+                let xmlhttp = new XMLHttpRequest();
+                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/mybatchjob/status';
+                xmlhttp.open("GET", url);
+                xmlhttp.send();
+                xmlhttp.onload = (e) => {
+                    this.batchjobStatussen = JSON.parse(xmlhttp.response);
+                }
+            }
+        }
+    });
+    app.getStatus();
+
+</script>
+</body>
+</html>

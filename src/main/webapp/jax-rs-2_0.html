@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Java batch</title>
+</head>
+<body>
+<div style="margin: 20px;">
+    <h1>JAX-RS 2.0</h1>
+    <div id="app" class="shadow p-3 mb-5 bg-white rounded">
+        <h3>Invoer</h3>
+        <div class="form-group">
+            <label for="datum">Datum</label>
+            <input v-model="invoer.datum" id="datum" type="date" placeholder="datum" class="form-control-sm"/>
+        </div>
+        <div class="form-group">
+            <label for="bedrag">Bedrag</label>
+            <input v-model="invoer.bedrag" id="bedrag" placeholder="bedrag" class="form-control-sm" />
+        </div>
+        <div>
+            <button v-on:click="sendForm()" class="btn btn-primary">verstuur</button>
+        </div>
+        <div class="alert alert-primary" role="alert">
+            result: {{ resultaat.datum }} - {{ resultaat.bedrag }}
+        </div>
+    </div>
+    <div class="alert alert-primary" role="alert">
+        <a href="index.html">&lt;&lt; terug naar onderwerpen</a>
+    </div>
+</div>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            invoer: {},
+            resultaat: {}
+        },
+        methods: {
+            sendForm: function (event) {
+                alert(JSON.stringify(this.invoer));
+                let xmlhttp = new XMLHttpRequest();
+                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/myjaxrs';
+                xmlhttp.open("POST", url);
+                xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                xmlhttp.send(JSON.stringify(this.invoer));
+                xmlhttp.onload = (e) => {
+                    this.resultaat = JSON.parse(xmlhttp.response);
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
