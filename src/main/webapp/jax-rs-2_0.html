@@ -13,48 +13,53 @@
 <body>
 <div style="margin: 20px;">
     <h1>JAX-RS 2.0</h1>
-    <div id="app" class="shadow p-3 mb-5 bg-white rounded">
-        <h3>Invoer</h3>
-        <div class="form-group">
-            <label for="datum">Datum</label>
-            <input v-model="invoer.datum" id="datum" type="date" placeholder="datum" class="form-control-sm"/>
+    <div id="app">
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <h3>Invoer</h3>
+            <div class="form-group">
+                <label for="datum">Datum</label>
+                <input v-model="invoer.datum" id="datum" type="date" placeholder="datum" class="form-control-sm"/>
+            </div>
+            <div class="form-group">
+                <label for="bedrag">Bedrag</label>
+                <input v-model="invoer.bedrag" id="bedrag" placeholder="bedrag" class="form-control-sm"/>
+            </div>
+            <div>
+                <button v-on:click="sendForm()" class="btn btn-primary">verstuur</button>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="bedrag">Bedrag</label>
-            <input v-model="invoer.bedrag" id="bedrag" placeholder="bedrag" class="form-control-sm" />
-        </div>
-        <div>
-            <button v-on:click="sendForm()" class="btn btn-primary">verstuur</button>
+        <div v-if="resultaat.datum" class="shadow p-3 mb-5 bg-white rounded">
+            <h3>Resultaat</h3>
+            <div class="alert alert-success" role="alert">
+                1e dag van de maand = {{ new Date(resultaat.datum).toLocaleDateString() }} <br/>
+                ingevoerde bedrag x2 = {{ resultaat.bedrag }}
+            </div>
         </div>
         <div class="alert alert-primary" role="alert">
-            result: {{ resultaat.datum }} - {{ resultaat.bedrag }}
+            <a href="index.html">&lt;&lt; terug naar onderwerpen</a>
         </div>
     </div>
-    <div class="alert alert-primary" role="alert">
-        <a href="index.html">&lt;&lt; terug naar onderwerpen</a>
-    </div>
-</div>
-<script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            invoer: {},
-            resultaat: {}
-        },
-        methods: {
-            sendForm: function (event) {
-                alert(JSON.stringify(this.invoer));
-                let xmlhttp = new XMLHttpRequest();
-                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/myjaxrs';
-                xmlhttp.open("POST", url);
-                xmlhttp.setRequestHeader('Content-Type', 'application/json');
-                xmlhttp.send(JSON.stringify(this.invoer));
-                xmlhttp.onload = (e) => {
-                    this.resultaat = JSON.parse(xmlhttp.response);
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                invoer: {},
+                resultaat: {}
+            },
+            methods: {
+                sendForm: function (event) {
+                    // alert(JSON.stringify(this.invoer));
+                    let xmlhttp = new XMLHttpRequest();
+                    const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/myjaxrs';
+                    xmlhttp.open("POST", url);
+                    xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                    xmlhttp.send(JSON.stringify(this.invoer));
+                    xmlhttp.onload = (e) => {
+                        this.resultaat = JSON.parse(xmlhttp.response);
+                    }
                 }
             }
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
