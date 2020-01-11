@@ -22,6 +22,7 @@
                 <th>gestart</th>
                 <th>geeindigd</th>
                 <th>status</th>
+                <th>actie</th>
             </tr>
             </thead>
             <tbody>
@@ -29,7 +30,14 @@
                 <td>{{ status.jobName }}</td>
                 <td>{{ new Date(status.startTime).toLocaleDateString() }} {{ new Date(status.startTime).toLocaleTimeString() }}</td>
                 <td>{{ new Date(status.endTime).toLocaleDateString() }} {{ new Date(status.endTime).toLocaleTimeString() }}</td>
-                <td>{{ status.exitStatus }}</td>
+                <td>{{ status.batchStatus }}</td>
+                <td><button type="button" class="btn btn-warning btn-sm"
+                            v-if="status.batchStatus === 'STARTED'"
+                            v-on:click="stopBatch(status)">Stop</button></td>
+                <td><button type="button" class="btn btn-primary btn-sm"
+                            v-if="status.batchStatus === 'STOPPED'"
+                            v-on:click="restartBatch(status)">Herstart</button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -46,6 +54,26 @@
             batchjobStatussen: {}
         },
         methods: {
+            stopBatch: function(jobstatus) {
+                let xmlhttp = new XMLHttpRequest();
+                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/mybatchjob/stop';
+                xmlhttp.open("POST", url);
+                xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                xmlhttp.send(JSON.stringify(jobstatus));
+                xmlhttp.onload = (e) => {
+                    this.batchjobStatussen = JSON.parse(xmlhttp.response);
+                }
+            },
+            restartBatch: function(status) {
+                let xmlhttp = new XMLHttpRequest();
+                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/mybatchjob/restart';
+                xmlhttp.open("POST", url);
+                xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                xmlhttp.send(JSON.stringify(status));
+                xmlhttp.onload = (e) => {
+                    this.batchjobStatussen = JSON.parse(xmlhttp.response);
+                }
+            },
             getStatus: function (event) {
                 let xmlhttp = new XMLHttpRequest();
                 const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/mybatchjob/status';

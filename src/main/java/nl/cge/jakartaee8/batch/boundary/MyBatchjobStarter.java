@@ -1,20 +1,22 @@
 package nl.cge.jakartaee8.batch.boundary;
 
 import nl.cge.jakartaee8.batch.control.jobstatus.JobStatusController;
+import nl.cge.jakartaee8.batch.control.jobstatus.JobStatusDto;
 
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
+import javax.batch.runtime.JobExecution;
+import javax.batch.runtime.JobInstance;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.Properties;
 
 @Stateless
+@Consumes("application/json")
 @Produces("application/json")
 @Path("mybatchjob")
 public class MyBatchjobStarter {
@@ -42,6 +44,22 @@ public class MyBatchjobStarter {
     public Response startBatch() {
         JobOperator jobOperator = BatchRuntime.getJobOperator();
         long batchjobId = jobOperator.start("myBatchJob", new Properties());
+        return Response.ok(jobStatusController.getStatussen()).build();
+    }
+
+    @Path("stop")
+    @POST
+    public Response stopBatch(JobStatusDto jobStatusDto) {
+        JobOperator jobOperator = BatchRuntime.getJobOperator();
+        jobOperator.stop(jobStatusDto.getExecutionId());
+        return Response.ok(jobStatusController.getStatussen()).build();
+    }
+
+    @Path("restart")
+    @POST
+    public Response restartBatch(JobStatusDto jobStatusDto) {
+        JobOperator jobOperator = BatchRuntime.getJobOperator();
+        jobOperator.restart(jobStatusDto.getExecutionId(), new Properties());
         return Response.ok(jobStatusController.getStatussen()).build();
     }
 

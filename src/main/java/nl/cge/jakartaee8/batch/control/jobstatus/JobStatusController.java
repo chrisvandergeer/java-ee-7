@@ -3,6 +3,7 @@ package nl.cge.jakartaee8.batch.control.jobstatus;
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
 import javax.batch.runtime.JobExecution;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,11 +20,15 @@ public class JobStatusController {
 
     private JobStatusDto map(JobExecution jobExecution) {
         JobStatusDto dto = new JobStatusDto();
+        dto.setExecutionId(jobExecution.getExecutionId());
         dto.setJobName(jobExecution.getJobName());
         dto.setBatchStatus(jobExecution.getBatchStatus().name());
         dto.setExitStatus(jobExecution.getExitStatus());
-        dto.setStartTime(jobExecution.getStartTime());
-        dto.setEndTime(jobExecution.getEndTime());
+        dto.setStartTime(new java.sql.Date(jobExecution.getStartTime().getTime()).toLocalDate());
+        Date endTime = jobExecution.getEndTime();
+        if (endTime != null) {
+            dto.setEndTime(new java.sql.Date(endTime.getTime()).toLocalDate());
+        }
         return dto;
     }
 }
