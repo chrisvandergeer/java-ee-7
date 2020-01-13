@@ -1,18 +1,21 @@
 package nl.cge.jakartaee8.transakties.control;
 
-import nl.cge.jakartaee8.transakties.entity.Transaktie;
-
+import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.InputStream;
-import java.util.List;
 
+@Stateless
 public class HandleFileUploadController {
 
     @Inject
     private TransaktieAssembler assembler;
 
+    @PersistenceContext(name = "my-pu")
+    private EntityManager em;
+
     public void execute(InputStream inputStream) {
-        List<Transaktie> transaktieList = assembler.assemble(inputStream);
-        transaktieList.forEach(t -> System.out.println(t.toString()));
+        assembler.assemble(inputStream).forEach(transaktie -> em.persist(transaktie));
     }
 }
