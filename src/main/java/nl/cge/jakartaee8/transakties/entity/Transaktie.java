@@ -36,4 +36,8 @@ public class Transaktie {
     private String omschrijving2;
     private String omschrijving3;
 
+    public boolean isTegenpartij(String tegenpartij) {
+        String search = tegenpartij.toUpperCase();
+        return tegenrekening.toUpperCase().contains(search) || naamTegenpartij.toUpperCase().contains(search);
+    }
 }

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Java batch</title>
+</head>
+<body>
+<div style="margin: 20px;">
+    <h1>Transakties</h1>
+    <div id="app">
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <h3>Upload</h3>
+            <div class="form-group">
+                <form action="upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file"/>
+                    <input type="submit"/>
+                </form>
+            </div>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <h3>Transakties</h3>
+            <table class="table-sm table-striped table-bordered table-hover" style="width: 100%">
+                <tbody>
+                <tr>
+                    <td style="width: 10%"></td>
+                    <td style="width: 20%"><input v-model="zoekopdracht.tegenpartij" v-on:keyup="findTransakties()"/></td>
+                    <td style="width: 10%"></td>
+                    <td style="width: 60%"></td>
+                </tr>
+                </tbody>
+                <thead>
+                <tr>
+                    <th>datum</th>
+                    <th>naam tegenpartij</th>
+                    <th>bedrag</th>
+                    <th>omschrijving</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="tr in transakties">
+                    <td align="right">{{ new Date(tr.datum).toLocaleDateString() }}</td>
+                    <td>
+                        {{ tr.naamTegenpartij }}<br/>
+                        {{ tr.tegenrekening }}
+                    </td>
+                    <td align="right">{{ tr.bedrag.toFixed(2) }}</td>
+                    <td>{{ tr.omschrijving1 }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="alert alert-primary" role="alert">
+            <a href="index.html">&lt;&lt; terug naar onderwerpen</a>
+        </div>
+    </div>
+</div>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            transakties: {},
+            zoekopdracht: {
+                "tegenpartij": "",
+            }
+        },
+        methods: {
+            findTransakties: function () {
+                let xmlhttp = new XMLHttpRequest();
+                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie';
+                xmlhttp.open("POST", url);
+                xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                xmlhttp.send(JSON.stringify(this.zoekopdracht));
+                xmlhttp.onload = (e) => {
+                    this.transakties = JSON.parse(xmlhttp.response);
+                }
+            }
+        }
+    });
+    app.findTransakties();
+</script>
+</body>
+</html>
