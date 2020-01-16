@@ -26,15 +26,13 @@
         <div class="shadow p-3 mb-5 bg-white rounded">
             <h3>Transakties</h3>
             <table class="table-sm table-striped table-bordered table-hover" style="width: 100%">
-                <tbody>
+                <thead>
                 <tr>
                     <td style="width: 10%"></td>
-                    <td style="width: 20%"><input v-model="zoekopdracht.tegenpartij" v-on:keyup="findTransakties()"/></td>
+                    <td style="width: 20%"><input style="width: 100%" v-model="zoekopdracht.tegenpartij" v-on:keyup="findTransakties()"/></td>
                     <td style="width: 10%"></td>
-                    <td style="width: 60%"></td>
+                    <td style="width: 60%"><input style="width: 100%" v-model="zoekopdracht.omschrijving" v-on:keyup="findTransakties()" /></td>
                 </tr>
-                </tbody>
-                <thead>
                 <tr>
                     <th>datum</th>
                     <th>naam tegenpartij</th>
@@ -46,8 +44,7 @@
                 <tr v-for="tr in transakties">
                     <td align="right">{{ new Date(tr.datum).toLocaleDateString() }}</td>
                     <td>
-                        {{ tr.naamTegenpartij }}<br/>
-                        {{ tr.tegenrekening }}
+                        {{ tr.naamTegenpartij }} <span class="badge badge-light">{{ tr.tegenrekening }}</span>
                     </td>
                     <td align="right">{{ tr.bedrag.toFixed(2) }}</td>
                     <td>{{ tr.omschrijving1 }}</td>
@@ -67,6 +64,7 @@
             transakties: {},
             zoekopdracht: {
                 "tegenpartij": "",
+                "omschrijving": ""
             }
         },
         methods: {

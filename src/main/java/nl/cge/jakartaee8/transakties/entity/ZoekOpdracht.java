@@ -10,8 +10,13 @@ import lombok.ToString;
 public class ZoekOpdracht {
 
     private String tegenpartij;
+    private String omschrijving;
 
     public boolean isZoekenOpTegenpartij() {
         return !"".equals(tegenpartij.trim());
+    }
+
+    public boolean isZoekenOpOmschrijving() {
+        return !"".equals(omschrijving.trim());
     }
 }

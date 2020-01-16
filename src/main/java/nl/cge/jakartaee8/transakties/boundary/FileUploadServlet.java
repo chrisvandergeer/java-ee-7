@@ -23,5 +23,6 @@ public class FileUploadServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Part filePart = request.getPart("file");
         controller.execute(filePart.getInputStream());
+        response.sendRedirect("transakties.html");
     }
 }

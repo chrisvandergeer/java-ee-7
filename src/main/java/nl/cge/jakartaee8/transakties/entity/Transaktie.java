@@ -21,6 +21,7 @@ public class Transaktie {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true)
     private String volgnummer;
     private LocalDate datum;
     private LocalDate rentedatum;
@@ -39,5 +40,10 @@ public class Transaktie {
     public boolean isTegenpartij(String tegenpartij) {
         String search = tegenpartij.toUpperCase();
         return tegenrekening.toUpperCase().contains(search) || naamTegenpartij.toUpperCase().contains(search);
+    }
+
+    public boolean isOmschrijving(String omschrijving) {
+        String search = omschrijving.toUpperCase();
+        return omschrijving1.toUpperCase().contains(search);
     }
 }
