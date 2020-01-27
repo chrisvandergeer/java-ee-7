@@ -15,7 +15,13 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @Entity
+@NamedQueries(value = {
+        @NamedQuery(name = Transaktie.TRANSAKTIE_HOOGSTE_VOLGNUMMER,
+                query = "SELECT t FROM Transaktie t WHERE t.volgnummer = (SELECT MAX(x.volgnummer) FROM Transaktie x)")
+})
 public class Transaktie {
+
+    public static final String TRANSAKTIE_HOOGSTE_VOLGNUMMER = "transaktie.hoogste.volgnummer";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,5 +51,9 @@ public class Transaktie {
     public boolean isOmschrijving(String omschrijving) {
         String search = omschrijving.toUpperCase();
         return omschrijving1.toUpperCase().contains(search);
+    }
+
+    public Long getVolgnummerAsLong() {
+        return Long.valueOf(volgnummer);
     }
 }
