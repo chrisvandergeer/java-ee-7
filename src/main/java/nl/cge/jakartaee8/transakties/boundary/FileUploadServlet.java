@@ -1,6 +1,7 @@
 package nl.cge.jakartaee8.transakties.boundary;
 
 import nl.cge.jakartaee8.transakties.control.HandleFileUploadController;
+import nl.cge.jakartaee8.transakties.control.InvalidTransaktiebestandException;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -22,7 +23,11 @@ public class FileUploadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Part filePart = request.getPart("file");
-        controller.execute(filePart.getInputStream());
-        response.sendRedirect("transakties.html");
+        try {
+            controller.execute(filePart.getInputStream());
+            response.sendRedirect("transakties.html");
+        } catch (InvalidTransaktiebestandException e) {
+            response.getWriter().println(e.getMessage());
+        }
     }
 }

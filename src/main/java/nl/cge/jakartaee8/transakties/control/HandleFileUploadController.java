@@ -32,13 +32,20 @@ public class HandleFileUploadController {
         System.out.println("Aantal records in bestand voor opschonen: " + transakties.size());
         transakties = transakties.stream().filter(t -> t.getVolgnummerAsLong() > hoogsteVolgnummerInDatabase).collect(Collectors.toList());
         System.out.println("Aantal records in bestand na opschonen:  " + transakties.size());
-        valideer(laagsteVolgnummerInBestand, hoogsteVolgnummerInDatabase);
+        valideerVolgnummers(laagsteVolgnummerInBestand, hoogsteVolgnummerInDatabase);
+        valideerOpNieuweTransakties(transakties.size());
         transakties.forEach(tr -> em.persist(tr));
     }
 
-    private void valideer(Long laagsteVolgnummerInBestand, Long hoogsteVolgnummerInDatabase) {
-        if (laagsteVolgnummerInBestand > hoogsteVolgnummerInDatabase) {
-            throw new IllegalArgumentException("Upload eerst oudere transakties, laagste volgnummer moet minimaal zijn: " + hoogsteVolgnummerInDatabase + 1);
+    private void valideerOpNieuweTransakties(int size) {
+        if (size == 0) {
+            throw new InvalidTransaktiebestandException("Geen nieuwe transakties te importeren");
+        }
+    }
+
+    private void valideerVolgnummers(Long laagsteVolgnummerInBestand, Long hoogsteVolgnummerInDatabase) {
+        if (laagsteVolgnummerInBestand < hoogsteVolgnummerInDatabase) {
+            throw new InvalidTransaktiebestandException("Upload eerst oudere transakties, laagste volgnummer moet minimaal zijn: " + hoogsteVolgnummerInDatabase + 1);
         }
     }
 
