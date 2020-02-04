@@ -25,19 +25,29 @@
         </div>
         <div class="shadow p-3 mb-5 bg-white rounded">
             <h3>Transakties</h3>
+            <div class="input-group mb-3">
+                <input class="form-control" style="width: 50%" v-model="zoekopdracht.tag2add"
+                       placeholder="tag toevoegen aan zoekopdracht resultaten"/>
+                <button type="button" class="btn btn-primary" v-on:click="addTag()">Voeg toe</button>
+            </div>
             <table class="table-sm table-striped table-bordered table-hover" style="width: 100%">
                 <thead>
                 <tr>
                     <td style="width: 10%"></td>
-                    <td style="width: 20%"><input style="width: 100%" v-model="zoekopdracht.tegenpartij" v-on:keyup="findTransakties()"/></td>
+                    <td style="width: 20%"><input style="width: 100%" v-model="zoekopdracht.tegenpartij"
+                                                  v-on:keyup="findTransakties()"/></td>
                     <td style="width: 10%"></td>
-                    <td style="width: 60%"><input style="width: 100%" v-model="zoekopdracht.omschrijving" v-on:keyup="findTransakties()" /></td>
+                    <td style="width: 40%"><input style="width: 100%" v-model="zoekopdracht.omschrijving"
+                                                  v-on:keyup="findTransakties()"/></td>
+                    <td style="width: 20%"><input style="width: 100%" v-model="zoekopdracht.tag"
+                                                  v-on:keyup="findTransakties()"/></td>
                 </tr>
                 <tr>
                     <th>datum</th>
                     <th>naam tegenpartij</th>
                     <th>bedrag</th>
                     <th>omschrijving</th>
+                    <th>tags</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -48,6 +58,11 @@
                     </td>
                     <td align="right">{{ tr.bedrag.toFixed(2) }}</td>
                     <td>{{ tr.omschrijving1 }}</td>
+                    <td>
+                        <span v-for="tag in tr.tags">
+                            <span class="badge badge-pill badge-primary">{{ tag.naam }}</span>
+                        </span>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -64,13 +79,25 @@
             transakties: {},
             zoekopdracht: {
                 "tegenpartij": "",
-                "omschrijving": ""
+                "omschrijving": "",
+                "tag": "",
+                "tag2add": ""
             }
         },
         methods: {
             findTransakties: function () {
                 let xmlhttp = new XMLHttpRequest();
                 const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie';
+                xmlhttp.open("POST", url);
+                xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                xmlhttp.send(JSON.stringify(this.zoekopdracht));
+                xmlhttp.onload = (e) => {
+                    this.transakties = JSON.parse(xmlhttp.response);
+                }
+            },
+            addTag: function () {
+                let xmlhttp = new XMLHttpRequest();
+                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie/addtag';
                 xmlhttp.open("POST", url);
                 xmlhttp.setRequestHeader('Content-Type', 'application/json');
                 xmlhttp.send(JSON.stringify(this.zoekopdracht));

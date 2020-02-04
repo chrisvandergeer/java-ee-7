@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.*;
 
 @Accessors(chain = true)
 @Getter
@@ -42,6 +43,8 @@ public class Transaktie {
     private String omschrijving1;
     private String omschrijving2;
     private String omschrijving3;
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Tag> tags = new HashSet<>();
 
     public boolean isTegenpartij(String tegenpartij) {
         String search = tegenpartij.toUpperCase();
@@ -52,8 +55,15 @@ public class Transaktie {
         String search = omschrijving.toUpperCase();
         return omschrijving1.toUpperCase().contains(search);
     }
+    public boolean hasTags(String tagNames) {
+        return tags.stream().anyMatch(tag -> tagNames.equals(tag.getNaam()));
+    }
 
     public Long getVolgnummerAsLong() {
         return Long.valueOf(volgnummer);
+    }
+
+    public void addTag(String tag2add) {
+        tags.add(new Tag(tag2add));
     }
 }

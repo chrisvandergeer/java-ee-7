@@ -26,12 +26,24 @@ public class TransaktieResource {
 
     @POST
     public List<Transaktie> find(ZoekOpdracht zoekOpdracht) {
-        List<Transaktie> transakties = em.createQuery("select t from Transaktie t order by t.volgnummer desc", Transaktie.class)
+        return findTransacties(zoekOpdracht);
+    }
+
+    @POST
+    @Path("addtag")
+    public List<Transaktie> addTag(ZoekOpdracht zoekOpdracht) {
+        findTransacties(zoekOpdracht).forEach(tr -> tr.addTag(zoekOpdracht.getTag2add()));
+        em.flush();
+        return find(zoekOpdracht);
+    }
+
+    private List<Transaktie> findTransacties(ZoekOpdracht zoekOpdracht) {
+        return em.createQuery("select t from Transaktie t order by t.volgnummer desc", Transaktie.class)
                 .getResultList()
                 .stream()
                 .filter(tr -> !zoekOpdracht.isZoekenOpTegenpartij() || tr.isTegenpartij(zoekOpdracht.getTegenpartij()))
                 .filter(tr -> !zoekOpdracht.isZoekenOpOmschrijving() || tr.isOmschrijving(zoekOpdracht.getOmschrijving()) )
+                .filter(tr -> !zoekOpdracht.isZoekenOpTag() || tr.hasTags(zoekOpdracht.getTag()))
                 .collect(Collectors.toList());
-        return transakties;
     }
 }
