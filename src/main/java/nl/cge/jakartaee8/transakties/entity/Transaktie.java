@@ -9,7 +9,11 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Accessors(chain = true)
 @Getter
@@ -55,15 +59,20 @@ public class Transaktie {
         String search = omschrijving.toUpperCase();
         return omschrijving1.toUpperCase().contains(search);
     }
+
     public boolean hasTags(String tagNames) {
-        return tags.stream().anyMatch(tag -> tagNames.equals(tag.getNaam()));
+        List<String> tagsToSearchFor = Arrays.stream(tagNames.split(" "))
+                .map(String::trim)
+                .collect(Collectors.toList());
+        return tags.stream().map(t -> t.getNaam()).collect(Collectors.toList()).containsAll(tagsToSearchFor);
     }
 
     public Long getVolgnummerAsLong() {
         return Long.valueOf(volgnummer);
     }
 
-    public void addTag(String tag2add) {
+    public Transaktie addTag(String tag2add) {
         tags.add(new Tag(tag2add));
+        return this;
     }
 }

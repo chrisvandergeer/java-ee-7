@@ -15,12 +15,8 @@
     <h1>Transakties</h1>
     <div id="app">
         <div class="shadow p-3 mb-5 bg-white rounded">
-            <h3>Upload</h3>
             <div class="form-group">
-                <form action="upload" method="post" enctype="multipart/form-data">
-                    <input type="file" name="file"/>
-                    <input type="submit"/>
-                </form>
+                <a class="btn btn-primary" href="uploadtransakties.html">Upload transakties</a>
             </div>
         </div>
         <div class="shadow p-3 mb-5 bg-white rounded">
@@ -86,13 +82,15 @@
         },
         methods: {
             findTransakties: function () {
-                let xmlhttp = new XMLHttpRequest();
-                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie';
-                xmlhttp.open("POST", url);
-                xmlhttp.setRequestHeader('Content-Type', 'application/json');
-                xmlhttp.send(JSON.stringify(this.zoekopdracht));
-                xmlhttp.onload = (e) => {
-                    this.transakties = JSON.parse(xmlhttp.response);
+                if (this.zoekopdracht.tag.trim() === '' || this.zoekopdracht.tag.endsWith(' ')) {
+                    let xmlhttp = new XMLHttpRequest();
+                    const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie';
+                    xmlhttp.open("POST", url);
+                    xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                    xmlhttp.send(JSON.stringify(this.zoekopdracht));
+                    xmlhttp.onload = (e) => {
+                        this.transakties = JSON.parse(xmlhttp.response);
+                    }
                 }
             },
             addTag: function () {

@@ -32,9 +32,9 @@ public class TransaktieResource {
     @POST
     @Path("addtag")
     public List<Transaktie> addTag(ZoekOpdracht zoekOpdracht) {
-        findTransacties(zoekOpdracht).forEach(tr -> tr.addTag(zoekOpdracht.getTag2add()));
-        em.flush();
-        return find(zoekOpdracht);
+        return findTransacties(zoekOpdracht).stream()
+                .map(tr -> tr.addTag(zoekOpdracht.getTag2add()))
+                .collect(Collectors.toList());
     }
 
     private List<Transaktie> findTransacties(ZoekOpdracht zoekOpdracht) {
