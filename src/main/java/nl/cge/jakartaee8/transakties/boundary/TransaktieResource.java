@@ -2,6 +2,7 @@ package nl.cge.jakartaee8.transakties.boundary;
 
 import nl.cge.jakartaee8.transakties.entity.Transaktie;
 import nl.cge.jakartaee8.transakties.entity.ZoekOpdracht;
+import nl.cge.jakartaee8.transakties.entity.ZoekResultaat;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -20,21 +21,22 @@ public class TransaktieResource {
     private EntityManager em;
 
     @GET
-    public List<Transaktie> findAll() {
+    public ZoekResultaat findAll() {
         return find(new ZoekOpdracht());
     }
 
     @POST
-    public List<Transaktie> find(ZoekOpdracht zoekOpdracht) {
-        return findTransacties(zoekOpdracht);
+    public ZoekResultaat find(ZoekOpdracht zoekOpdracht) {
+        return new ZoekResultaat(findTransacties(zoekOpdracht));
     }
 
     @POST
     @Path("addtag")
-    public List<Transaktie> addTag(ZoekOpdracht zoekOpdracht) {
-        return findTransacties(zoekOpdracht).stream()
+    public ZoekResultaat addTag(ZoekOpdracht zoekOpdracht) {
+        List<Transaktie> transakties = findTransacties(zoekOpdracht).stream()
                 .map(tr -> tr.addTag(zoekOpdracht.getTag2add()))
                 .collect(Collectors.toList());
+        return new ZoekResultaat(transakties);
     }
 
     private List<Transaktie> findTransacties(ZoekOpdracht zoekOpdracht) {
