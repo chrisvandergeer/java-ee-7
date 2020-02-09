@@ -1,10 +1,13 @@
 package nl.cge.jakartaee8.transakties.boundary;
 
+import nl.cge.jakartaee8.transakties.control.FindTransaktiesController;
+import nl.cge.jakartaee8.transakties.control.MaandoverzichtController;
 import nl.cge.jakartaee8.transakties.entity.Transaktie;
 import nl.cge.jakartaee8.transakties.entity.ZoekOpdracht;
 import nl.cge.jakartaee8.transakties.entity.ZoekResultaat;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.*;
@@ -20,6 +23,12 @@ public class TransaktieResource {
     @PersistenceContext(name = "my-pu")
     private EntityManager em;
 
+    @Inject
+    private FindTransaktiesController findTransaktiesController;
+
+    @Inject
+    private MaandoverzichtController maandoverzichtController;
+
     @GET
     public ZoekResultaat findAll() {
         return find(new ZoekOpdracht());
@@ -27,25 +36,21 @@ public class TransaktieResource {
 
     @POST
     public ZoekResultaat find(ZoekOpdracht zoekOpdracht) {
-        return new ZoekResultaat(findTransacties(zoekOpdracht));
+        List<Transaktie> transacties = findTransaktiesController.findTransacties(zoekOpdracht);
+        ZoekResultaat zoekResultaat = new ZoekResultaat(transacties);
+        if (zoekOpdracht.isZoekenOpTag() && !transacties.isEmpty()) {
+            zoekResultaat.setMaandoverzicht(maandoverzichtController.aggregeer(transacties));
+        }
+        return zoekResultaat;
     }
 
     @POST
     @Path("addtag")
     public ZoekResultaat addTag(ZoekOpdracht zoekOpdracht) {
-        List<Transaktie> transakties = findTransacties(zoekOpdracht).stream()
+        List<Transaktie> transakties = findTransaktiesController.findTransacties(zoekOpdracht).stream()
                 .map(tr -> tr.addTag(zoekOpdracht.getTag2add()))
                 .collect(Collectors.toList());
         return new ZoekResultaat(transakties);
     }
 
-    private List<Transaktie> findTransacties(ZoekOpdracht zoekOpdracht) {
-        return em.createQuery("select t from Transaktie t order by t.volgnummer desc", Transaktie.class)
-                .getResultList()
-                .stream()
-                .filter(tr -> !zoekOpdracht.isZoekenOpTegenpartij() || tr.isTegenpartij(zoekOpdracht.getTegenpartij()))
-                .filter(tr -> !zoekOpdracht.isZoekenOpOmschrijving() || tr.isOmschrijving(zoekOpdracht.getOmschrijving()) )
-                .filter(tr -> !zoekOpdracht.isZoekenOpTag() || tr.hasTags(zoekOpdracht.getTag()))
-                .collect(Collectors.toList());
-    }
 }
