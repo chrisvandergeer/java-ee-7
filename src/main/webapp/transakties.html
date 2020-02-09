@@ -26,6 +26,12 @@
                        placeholder="tag toevoegen aan zoekopdracht resultaten"/>
                 <button type="button" class="btn btn-primary" v-on:click="addTag()">Voeg toe</button>
             </div>
+            <div style="width: 100%">
+                <div style="float: left; width: 9%" v-for="m in zoekresultaat.maandoverzicht">{{ m.maand }}</div>
+            </div>
+            <div style="width: 100%">
+                <div style="float: left; width: 9%" v-for="m in zoekresultaat.maandoverzicht">{{ m.bedrag }}</div>
+            </div>
             <table class="table-sm table-striped table-bordered table-hover" style="width: 100%">
                 <thead>
                 <tr>

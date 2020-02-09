@@ -2,6 +2,7 @@ package nl.cge.jakartaee8.transakties.boundary;
 
 import nl.cge.jakartaee8.transakties.control.FindTransaktiesController;
 import nl.cge.jakartaee8.transakties.control.MaandoverzichtController;
+import nl.cge.jakartaee8.transakties.entity.Maandtotaal;
 import nl.cge.jakartaee8.transakties.entity.Transaktie;
 import nl.cge.jakartaee8.transakties.entity.ZoekOpdracht;
 import nl.cge.jakartaee8.transakties.entity.ZoekResultaat;
@@ -39,7 +40,7 @@ public class TransaktieResource {
         List<Transaktie> transacties = findTransaktiesController.findTransacties(zoekOpdracht);
         ZoekResultaat zoekResultaat = new ZoekResultaat(transacties);
         if (zoekOpdracht.isZoekenOpTag() && !transacties.isEmpty()) {
-            zoekResultaat.setMaandoverzicht(maandoverzichtController.aggregeer(transacties));
+            zoekResultaat.setMaandoverzicht(Maandtotaal.create(maandoverzichtController.aggregeer(transacties)));
         }
         return zoekResultaat;
     }
