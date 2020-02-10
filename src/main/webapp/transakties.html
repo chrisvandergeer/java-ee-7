@@ -27,7 +27,7 @@
             <!-- MAANDOVERZICHT -->
             <div style="width: 100%">
                 <div class="card" v-for="m in zoekresultaat.maandoverzicht" style="width: 8.4%; float: left">
-                    <div class="card-body">
+                    <div class="card-body" style="font-size: smaller">
                         <p class="card-title" style="font-weight: bold; text-align: right">{{ m.maand.maand }} {{ m.maand.jaar }}</p>
                         <p class="card-text" style="text-align: right">&euro; {{ m.bedrag.toFixed(2) }}</p>
                     </div>
@@ -38,7 +38,7 @@
                 <button type="button" class="btn btn-primary" v-on:click="addTag()">Tag</button>
                 <input class="form-control" v-model="zoekopdracht.tag2add"
                        placeholder="tag toevoegen aan zoekopdracht resultaten"/>
-                <button type="button" class="btn btn-primary" v-on:click="addTag()">Tag en save Query</button>
+                <button type="button" class="btn btn-primary" v-on:click="addTagAndSave()">Tag en save Query</button>
             </div>
             <table class="table-sm table-striped table-bordered table-hover" style="width: 100%">
                 <thead>
@@ -109,7 +109,17 @@
             },
             addTag: function () {
                 let xmlhttp = new XMLHttpRequest();
-                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie/addtag';
+                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie/tag';
+                xmlhttp.open("POST", url);
+                xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                xmlhttp.send(JSON.stringify(this.zoekopdracht));
+                xmlhttp.onload = (e) => {
+                    this.zoekresultaat = JSON.parse(xmlhttp.response);
+                }
+            },
+            addTagAndSave: function () {
+                let xmlhttp = new XMLHttpRequest();
+                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie/tagAndSave';
                 xmlhttp.open("POST", url);
                 xmlhttp.setRequestHeader('Content-Type', 'application/json');
                 xmlhttp.send(JSON.stringify(this.zoekopdracht));

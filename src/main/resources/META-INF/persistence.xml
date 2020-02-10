@@ -8,6 +8,7 @@
         <class>nl.cge.jakartaee8.batch.entity.MyEntity</class>
         <class>nl.cge.jakartaee8.transakties.entity.Transaktie</class>
         <class>nl.cge.jakartaee8.transakties.entity.Tag</class>
+        <class>nl.cge.jakartaee8.transakties.entity.ZoekOpdracht</class>
         
         <properties>
 <!--            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>-->

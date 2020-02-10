@@ -5,9 +5,8 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 
-import static java.time.temporal.TemporalAdjusters.*;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 
 @Getter
 @AllArgsConstructor
@@ -21,6 +20,7 @@ public class Periode {
     public Periode beperkMaanden(Integer aantalMaanden) {
         LocalDate beperkingOpBegindatum = einddatum.minusMonths(aantalMaanden).with(firstDayOfMonth());
         LocalDate nieuweBegindatum = beperkingOpBegindatum.isAfter(begindatum) ? beperkingOpBegindatum : begindatum;
+        System.out.println(new Periode(nieuweBegindatum, einddatum));
         return new Periode(nieuweBegindatum, einddatum);
     }
 

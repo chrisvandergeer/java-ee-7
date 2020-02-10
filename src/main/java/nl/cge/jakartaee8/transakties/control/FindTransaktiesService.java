@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FindTransaktiesController  {
+public class FindTransaktiesService {
 
     @PersistenceContext(name = "my-pu")
     private EntityManager em;

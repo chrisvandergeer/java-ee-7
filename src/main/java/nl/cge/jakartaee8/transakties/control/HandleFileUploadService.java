@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import static nl.cge.jakartaee8.transakties.entity.Transaktie.TRANSAKTIE_HOOGSTE_VOLGNUMMER;
 
 @Stateless
-public class HandleFileUploadController {
+public class HandleFileUploadService {
 
     @Inject
     private TransaktieAssembler assembler;

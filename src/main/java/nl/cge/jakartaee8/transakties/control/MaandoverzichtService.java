@@ -11,17 +11,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static java.time.temporal.TemporalAdjusters.*;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.reducing;
 
-public class MaandoverzichtController {
+public class MaandoverzichtService {
 
     public Map<Maand, BigDecimal> aggregeer(List<Transaktie> transakties) {
         Periode periode = bepaalPeriode(transakties).beperkMaanden(12);
-        Map<Maand, BigDecimal> maandoverzicht = transakties.stream().filter(tr -> periode.isDatumInPeriode(tr.getDatum()))
+        Map<Maand, BigDecimal> maandoverzicht = transakties.stream()
+                .filter(tr -> periode.isDatumInPeriode(tr.getDatum()))
                 .collect(
-                        groupingBy(tr -> new Maand(tr.getDatum()),
+                        groupingBy(tr -> new Maand(tr.getDatum().with(firstDayOfMonth())),
                                 reducing(BigDecimal.ZERO, Transaktie::getBedrag, BigDecimal::add)));
         return new TreeMap<>(maandoverzicht);
     }
@@ -29,11 +31,11 @@ public class MaandoverzichtController {
     private Periode bepaalPeriode(List<Transaktie> transakties) {
         LocalDate begindatum = transakties.stream()
                 .min(comparing(Transaktie::getDatum))
-                .map(tr -> tr.getDatum().with(TemporalAdjusters.firstDayOfMonth()).plusMonths(1))
+                .map(tr -> tr.getDatum().with(firstDayOfMonth()).plusMonths(1))
                 .orElseThrow(() -> new IllegalStateException("geen transakties gevonden voor maandoverzicht"));
         LocalDate einddatum = transakties.stream()
                 .max(comparing(Transaktie::getDatum))
-                .map(tr -> tr.getDatum().minusMonths(1).with(TemporalAdjusters.lastDayOfMonth()))
+                .map(tr -> tr.getDatum().minusMonths(1).with(lastDayOfMonth()))
                 .orElseThrow(() -> new IllegalStateException("geen transakties gevonden voor maandoverzicht"));
         return new Periode(begindatum, einddatum);
     }

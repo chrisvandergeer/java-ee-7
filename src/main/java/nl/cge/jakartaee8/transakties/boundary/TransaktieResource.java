@@ -1,7 +1,7 @@
 package nl.cge.jakartaee8.transakties.boundary;
 
-import nl.cge.jakartaee8.transakties.control.FindTransaktiesController;
-import nl.cge.jakartaee8.transakties.control.MaandoverzichtController;
+import nl.cge.jakartaee8.transakties.control.FindTransaktiesService;
+import nl.cge.jakartaee8.transakties.control.MaandoverzichtService;
 import nl.cge.jakartaee8.transakties.entity.Maandtotaal;
 import nl.cge.jakartaee8.transakties.entity.Transaktie;
 import nl.cge.jakartaee8.transakties.entity.ZoekOpdracht;
@@ -25,10 +25,10 @@ public class TransaktieResource {
     private EntityManager em;
 
     @Inject
-    private FindTransaktiesController findTransaktiesController;
+    private FindTransaktiesService findTransaktiesService;
 
     @Inject
-    private MaandoverzichtController maandoverzichtController;
+    private MaandoverzichtService maandoverzichtService;
 
     @GET
     public ZoekResultaat findAll() {
@@ -37,21 +37,37 @@ public class TransaktieResource {
 
     @POST
     public ZoekResultaat find(ZoekOpdracht zoekOpdracht) {
-        List<Transaktie> transacties = findTransaktiesController.findTransacties(zoekOpdracht);
+        List<Transaktie> transacties = findTransaktiesService.findTransacties(zoekOpdracht);
+        return createZoekResultaat(zoekOpdracht, transacties);
+    }
+
+    @POST
+    @Path("tag")
+    public ZoekResultaat tag(ZoekOpdracht zoekOpdracht) {
+        List<Transaktie> transakties = findTransaktiesAndTag(zoekOpdracht);
+        return createZoekResultaat(zoekOpdracht, transakties);
+    }
+
+    @POST
+    @Path("tagAndSave")
+    public ZoekResultaat tagAndSave(ZoekOpdracht zoekOpdracht) {
+        List<Transaktie> transakties = findTransaktiesAndTag(zoekOpdracht);
+        em.persist(zoekOpdracht);
+        return createZoekResultaat(zoekOpdracht, transakties);
+    }
+
+    private ZoekResultaat createZoekResultaat(ZoekOpdracht zoekOpdracht, List<Transaktie> transacties) {
         ZoekResultaat zoekResultaat = new ZoekResultaat(transacties);
         if (zoekOpdracht.isZoekenOpTag() && !transacties.isEmpty()) {
-            zoekResultaat.setMaandoverzicht(Maandtotaal.create(maandoverzichtController.aggregeer(transacties)));
+            zoekResultaat.setMaandoverzicht(Maandtotaal.create(maandoverzichtService.aggregeer(transacties)));
         }
         return zoekResultaat;
     }
 
-    @POST
-    @Path("addtag")
-    public ZoekResultaat addTag(ZoekOpdracht zoekOpdracht) {
-        List<Transaktie> transakties = findTransaktiesController.findTransacties(zoekOpdracht).stream()
+    private List<Transaktie> findTransaktiesAndTag(ZoekOpdracht zoekOpdracht) {
+        return findTransaktiesService.findTransacties(zoekOpdracht).stream()
                 .map(tr -> tr.addTag(zoekOpdracht.getTag2add()))
                 .collect(Collectors.toList());
-        return new ZoekResultaat(transakties);
     }
 
 }
