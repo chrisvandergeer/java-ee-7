@@ -1,5 +1,6 @@
 package nl.cge.jakartaee8.transakties.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,9 +13,11 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 @Entity
 public class Tag {
 
+    @EqualsAndHashCode.Exclude
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -24,4 +27,5 @@ public class Tag {
     public Tag(String tagnaam) {
         this.naam = tagnaam;
     }
+
 }

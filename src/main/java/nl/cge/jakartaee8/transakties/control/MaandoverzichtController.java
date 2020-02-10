@@ -1,5 +1,6 @@
 package nl.cge.jakartaee8.transakties.control;
 
+import nl.cge.jakartaee8.transakties.entity.Maand;
 import nl.cge.jakartaee8.transakties.entity.Periode;
 import nl.cge.jakartaee8.transakties.entity.Transaktie;
 
@@ -16,12 +17,11 @@ import static java.util.stream.Collectors.reducing;
 
 public class MaandoverzichtController {
 
-    public Map<String, BigDecimal> aggregeer(List<Transaktie> transakties) {
-        Map<String, BigDecimal> result = new TreeMap<>();
+    public Map<Maand, BigDecimal> aggregeer(List<Transaktie> transakties) {
         Periode periode = bepaalPeriode(transakties).beperkMaanden(12);
-        Map<String, BigDecimal> maandoverzicht = transakties.stream().filter(tr -> periode.isDatumInPeriode(tr.getDatum()))
+        Map<Maand, BigDecimal> maandoverzicht = transakties.stream().filter(tr -> periode.isDatumInPeriode(tr.getDatum()))
                 .collect(
-                        groupingBy(tr -> String.format("%s-%02d", tr.getDatum().getYear(), tr.getDatum().getMonthValue()),
+                        groupingBy(tr -> new Maand(tr.getDatum()),
                                 reducing(BigDecimal.ZERO, Transaktie::getBedrag, BigDecimal::add)));
         return new TreeMap<>(maandoverzicht);
     }

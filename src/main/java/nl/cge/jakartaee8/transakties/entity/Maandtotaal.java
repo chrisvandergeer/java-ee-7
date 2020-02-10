@@ -14,13 +14,13 @@ import static java.util.Comparator.comparing;
 @AllArgsConstructor
 public class Maandtotaal {
 
-    private String maand;
+    private Maand maand;
     private BigDecimal bedrag;
 
-    public static List<Maandtotaal> create(Map<String, BigDecimal> maandtotalen) {
+    public static List<Maandtotaal> create(Map<Maand, BigDecimal> maandtotalen) {
         return maandtotalen.entrySet().stream()
                 .map(entry -> new Maandtotaal(entry.getKey(), entry.getValue()))
-                .sorted(comparing(Maandtotaal::getMaand))
+                .sorted(comparing(mt -> mt.getMaand().getDatum()))
                 .collect(Collectors.toList());
     }
 
