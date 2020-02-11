@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.function.Predicate;
 
 @Getter
 @Setter
@@ -24,15 +25,22 @@ public class ZoekOpdracht {
     private String tag;
     private String tag2add;
 
-    public boolean isZoekenOpTegenpartij() {
+    private boolean isZoekenOpTegenpartij() {
         return !"".equals(tegenpartij.trim());
     }
-
-    public boolean isZoekenOpOmschrijving() {
+    private boolean isZoekenOpOmschrijving() {
         return !"".equals(omschrijving.trim());
     }
-
     public boolean isZoekenOpTag() {
         return !"".equals(tag.trim());
     }
+
+    public Predicate<Transaktie> getFilter() {
+        Predicate<Transaktie> filter = tr -> true;
+        if (isZoekenOpOmschrijving()) filter = filter.and(tr -> tr.isOmschrijving(omschrijving));
+        if (isZoekenOpTegenpartij()) filter = filter.and((tr -> tr.isTegenpartij(tegenpartij)));
+        if (isZoekenOpTag()) filter = filter.and(tr -> tr.hasTags(tag));
+        return filter;
+    }
+
 }

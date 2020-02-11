@@ -12,22 +12,22 @@ import java.util.function.Function;
 
 public class TransaktieAssembler {
 
-    public static final int VOLGNUMMER = 3;
-    public static final int DATUM = 4;
-    public static final int RENTEDATUM = 5;
-    public static final int BEDRAG = 6;
-    public static final int SALDONATRANSAKTIE = 7;
-    public static final int TEGENREKENING = 8;
-    public static final int NAAMTEGENPARTIJ = 9;
-    public static final int CODE = 13;
-    public static final int OMSCHRIJVING1 = 19;
-    public static final int OMSCHRIJVING2 = 20;
-    public static final int OMSCHRIJVING3 = 21;
+    private static final int VOLGNUMMER = 3;
+    private static final int DATUM = 4;
+    private static final int RENTEDATUM = 5;
+    private static final int BEDRAG = 6;
+    private static final int SALDONATRANSAKTIE = 7;
+    private static final int TEGENREKENING = 8;
+    private static final int NAAMTEGENPARTIJ = 9;
+    private static final int CODE = 13;
+    private static final int OMSCHRIJVING1 = 19;
+    private static final int OMSCHRIJVING2 = 20;
+    private static final int OMSCHRIJVING3 = 21;
 
     private Function<String, BigDecimal> toBigDecimal = (value) -> new BigDecimal(value.replace(",", "."));
-    private Function<String, LocalDate> toLocalDate = (value) -> LocalDate.parse(value);
+    private Function<String, LocalDate> toLocalDate = LocalDate::parse;
 
-    public List<Transaktie> assemble(InputStream csvInputStream) {
+    List<Transaktie> assemble(InputStream csvInputStream) {
         List<Transaktie> result = new ArrayList<>();
         Scanner scanner = new Scanner(csvInputStream);
         scanner.nextLine();

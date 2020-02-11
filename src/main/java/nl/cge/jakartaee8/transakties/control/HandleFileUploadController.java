@@ -14,13 +14,16 @@ import java.util.stream.Collectors;
 import static nl.cge.jakartaee8.transakties.entity.Transaktie.TRANSAKTIE_HOOGSTE_VOLGNUMMER;
 
 @Stateless
-public class HandleFileUploadService {
+public class HandleFileUploadController {
 
     @Inject
     private TransaktieAssembler assembler;
 
     @PersistenceContext(name = "my-pu")
     private EntityManager em;
+
+    @Inject
+    private QueryTagService queryTagService;
 
     public void execute(InputStream inputStream) {
         List<Transaktie> transakties = assembler.assemble(inputStream);
@@ -35,6 +38,7 @@ public class HandleFileUploadService {
         valideerVolgnummers(laagsteVolgnummerInBestand, hoogsteVolgnummerInDatabase);
         valideerOpNieuweTransakties(transakties.size());
         transakties.forEach(tr -> em.persist(tr));
+        queryTagService.execute();
     }
 
     private void valideerOpNieuweTransakties(int size) {
@@ -57,8 +61,8 @@ public class HandleFileUploadService {
 
     private Long laagsteVolgnummerInBestand(List<Transaktie> transakties) {
         return transakties.stream()
-                .max(Comparator.comparing(Transaktie::getVolgnummer, String::compareTo).reversed())
+                .min(Comparator.comparing(Transaktie::getVolgnummer, String::compareTo))
                 .map(Transaktie::getVolgnummerAsLong)
-                .orElse(0l);
+                .orElse(0L);
     }
 }

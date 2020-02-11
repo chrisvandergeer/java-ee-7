@@ -1,6 +1,6 @@
 package nl.cge.jakartaee8.transakties.boundary;
 
-import nl.cge.jakartaee8.transakties.control.HandleFileUploadService;
+import nl.cge.jakartaee8.transakties.control.HandleFileUploadController;
 import nl.cge.jakartaee8.transakties.control.InvalidTransaktiebestandException;
 
 import javax.inject.Inject;
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class FileUploadServlet extends HttpServlet {
 
     @Inject
-    private HandleFileUploadService controller;
+    private HandleFileUploadController controller;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

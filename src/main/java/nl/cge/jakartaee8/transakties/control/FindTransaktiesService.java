@@ -15,11 +15,8 @@ public class FindTransaktiesService {
 
     public List<Transaktie> findTransacties(ZoekOpdracht zoekOpdracht) {
         return em.createQuery("select t from Transaktie t order by t.volgnummer desc", Transaktie.class)
-                .getResultList()
-                .stream()
-                .filter(tr -> !zoekOpdracht.isZoekenOpTegenpartij() || tr.isTegenpartij(zoekOpdracht.getTegenpartij()))
-                .filter(tr -> !zoekOpdracht.isZoekenOpOmschrijving() || tr.isOmschrijving(zoekOpdracht.getOmschrijving()) )
-                .filter(tr -> !zoekOpdracht.isZoekenOpTag() || tr.hasTags(zoekOpdracht.getTag()))
+                .getResultList().stream()
+                .filter(zoekOpdracht.getFilter())
                 .collect(Collectors.toList());
     }
 }

@@ -9,10 +9,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Accessors(chain = true)
@@ -50,12 +47,12 @@ public class Transaktie {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Tag> tags = new HashSet<>();
 
-    public boolean isTegenpartij(String tegenpartij) {
+    boolean isTegenpartij(String tegenpartij) {
         String search = tegenpartij.toUpperCase();
         return tegenrekening.toUpperCase().contains(search) || naamTegenpartij.toUpperCase().contains(search);
     }
 
-    public boolean isOmschrijving(String omschrijving) {
+    boolean isOmschrijving(String omschrijving) {
         String search = omschrijving.toUpperCase();
         return omschrijving1.toUpperCase().contains(search);
     }

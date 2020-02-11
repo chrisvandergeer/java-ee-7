@@ -5,7 +5,7 @@ import javax.ejb.ApplicationException;
 @ApplicationException
 public class InvalidTransaktiebestandException extends RuntimeException {
 
-    public InvalidTransaktiebestandException(String msg) {
+    InvalidTransaktiebestandException(String msg) {
         super(msg);
     }
 }
