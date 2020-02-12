@@ -13,6 +13,10 @@ public class FindTransaktiesService {
     @PersistenceContext(name = "my-pu")
     private EntityManager em;
 
+    public List<Transaktie> findTransakties() {
+        return em.createQuery("select t from Transaktie t order by t.volgnummer desc", Transaktie.class).getResultList();
+    }
+
     public List<Transaktie> findTransacties(ZoekOpdracht zoekOpdracht) {
         return em.createQuery("select t from Transaktie t order by t.volgnummer desc", Transaktie.class)
                 .getResultList().stream()
