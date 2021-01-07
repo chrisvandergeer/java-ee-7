@@ -4,17 +4,12 @@ import nl.cge.jakartaee8.jaxrs20.entity.InputDto;
 import nl.cge.jakartaee8.jaxrs20.entity.OutputDto;
 
 import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.time.LocalDate;
-
-import static java.math.RoundingMode.CEILING;
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import java.util.UUID;
 
 @Stateless
 @Consumes("application/json")
@@ -22,14 +17,25 @@ import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 @Path("myjaxrs")
 public class MyJaxrsResource {
 
+    @GET
+    public Response handleGet() {
+        InputDto inputDto = new InputDto("geerc01", UUID.randomUUID().toString());
+        Entity<InputDto> entity = Entity.entity(inputDto, MediaType.APPLICATION_JSON_TYPE);
+        Response response = ClientBuilder.newClient()
+                .target("http://localhost:9080/java_ee_7_war_exploded/resources/myjaxrs/internal")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .post(entity);
+        OutputDto result = response.readEntity(OutputDto.class);
+        System.out.println(result.getJsonWebToken());
+        return Response.ok(result).build();
+    }
+
+    @Path("internal")
     @POST
-    public Response doPost(InputDto inputDto) {
-        LocalDate localDate = new Date(inputDto.getDatum().getTime()).toLocalDate().with(firstDayOfMonth());
-        OutputDto outputDto = new OutputDto(
-                Date.valueOf(localDate),
-                inputDto.getBedrag().multiply(BigDecimal.valueOf(2)).setScale(2, CEILING)
-        );
-        return Response.ok(outputDto).build();
+    public Response internalPost(InputDto inputDto) {
+        System.out.println(inputDto);
+        OutputDto result = new OutputDto(UUID.randomUUID().toString());
+        return Response.ok(result).build();
     }
 
 }
